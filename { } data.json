@@ -1,0 +1,13 @@
+{
+    "taas_config":{
+        "lo_0": "1.1.1.1",
+        "lo_1": "2.2.2.2",
+        "mask_32": "255.255.255.255"
+    },
+
+    "key_string": "string",
+    "boolean": false,
+    "int": 1,
+    "float": 1.0,
+    "array": [1, "two", 3.0]
+}

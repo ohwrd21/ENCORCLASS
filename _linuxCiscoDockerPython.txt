@@ -1,0 +1,76 @@
+devops-1:
+config t
+int gi 2
+no shut
+ip add 192.168.102.11 255.255.255.0
+line vty 0 14
+exec-timeout 0 0
+transport input all
+iox
+interface GigabitEthernet1
+ip address dhcp
+ip nat outside
+no shut
+exit
+!
+interface VirtualPortGroup0
+ip address 192.168.35.1 255.255.255.0
+ip nat inside
+exit
+!
+ip nat inside source list GS_NAT_ACL interface GigabitEthernet1 overload
+ip access-list standard GS_NAT_ACL
+permit 192.168.0.0 0.0.255.255
+!
+app-hosting appid guestshell
+ app-vnic gateway1 virtualportgroup 0 guest-interface 0
+    guest-ipaddress 192.168.35.3 netmask 255.255.255.0	
+	app-default-gateway 192.168.35.1  guest-interface 0 
+	name-server0 1.1.1.1
+ app-resource profile custom 
+   cpu 1500 
+   memory 512
+end
+
+PYthon in cisco:
+ex1
+import cli
+mycmd1 = [
+    "show ip int brief",
+]
+for k in mycmd1:
+    cli.executep(k)
+	
+ex2	
+import cli
+myversion = [
+    "show version",
+]
+for c in myversion:
+    cli.executep(c)
+	
+ex3: CLI Configure PYthon
+import cli
+configko = '''hostname NETDEVOPSme
+int loop 4
+ip add 4.4.4.4 255.255.255.255
+int loop 5
+ip add 5.5.5.5 255.255.255.255
+int loop 6
+ip add 6.6.6.6 255.255.255.255
+end
+'''
+cli.configurep(configko)
+
+ex3:dhcp via pythonconfigureprep:
+import cli
+commands = '''
+ip dhcp exclude 192.168.102.1 192.168.102.50
+ip dhcp pool LINUXPCS
+network 192.168.102.0 255.255.255.0
+default-router 192.168.102.11
+domain-name LINUXPCS.COM
+dns-server 8.8.8.8
+END
+'''
+cli.configurep(commands)

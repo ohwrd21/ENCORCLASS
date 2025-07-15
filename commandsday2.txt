@@ -1,0 +1,36 @@
+devops-2:
+config t
+int gi 2
+no shut
+ip add 192.168.102.12 255.255.255.0
+line vty 0 14
+exec-timeout 0 0
+transport input all
+iox
+interface GigabitEthernet1
+ip address dhcp
+ip nat outside
+no shut
+exit
+!
+interface VirtualPortGroup0
+ip address 192.168.36.1 255.255.255.0
+ip nat inside
+exit
+!
+ip nat inside source list GS_NAT_ACL interface GigabitEthernet1 overload
+ip access-list standard GS_NAT_ACL
+permit 192.168.0.0 0.0.255.255
+!
+app-hosting appid guestshell
+ app-vnic gateway1 virtualportgroup 0 guest-interface 0
+    guest-ipaddress 192.168.36.3 netmask 255.255.255.0	
+	app-default-gateway 192.168.36.1  guest-interface 0 
+	name-server0 1.1.1.1
+ app-resource profile custom 
+   cpu 1500 
+   memory 512
+endguest
+
+ip http secure-server
+ip http authetication 
